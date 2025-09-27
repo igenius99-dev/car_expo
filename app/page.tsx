@@ -4,91 +4,92 @@ import styles from "./page.module.css";
 export default function Home() {
   return (
     <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol>
-          <li>
-            Get started by editing <code>app/page.tsx</code>.
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
-
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.secondary}
-          >
-            Read our docs
-          </a>
+      {/* Navigation Header */}
+      <nav className={styles.nav}>
+        <div className={styles.navContainer}>
+          <div className={styles.logo}>
+            <span className={styles.logoText}>CAR EXPO</span>
+            <span className={styles.logoYear}>2024</span>
+          </div>
+          <div className={styles.navLinks}>
+            <a href="#showcase">Showcase</a>
+            <a href="#events">Events</a>
+            <a href="#exhibitors">Exhibitors</a>
+            <a href="#tickets">Tickets</a>
+          </div>
         </div>
-      </main>
+      </nav>
+
+      {/* Hero Section */}
+      <section className={styles.hero}>
+        <div className={styles.heroContent}>
+          <h1 className={styles.heroTitle}>
+            Premium Automotive
+            <span className={styles.heroHighlight}> Showcase</span>
+          </h1>
+          <p className={styles.heroSubtitle}>
+            Experience the future of automotive innovation with the world's most prestigious brands
+          </p>
+          <div className={styles.heroButtons}>
+            <button className={styles.primaryButton}>
+              Get Tickets
+            </button>
+            <button className={styles.secondaryButton}>
+              View Schedule
+            </button>
+          </div>
+        </div>
+        <div className={styles.heroImage}>
+          <div className={styles.carPlaceholder}>
+            🚗
+          </div>
+        </div>
+      </section>
+
+      {/* Car Showcase Section */}
+      <section id="showcase" className={styles.showcase}>
+        <h2 className={styles.sectionTitle}>Featured Vehicles</h2>
+        <div className={styles.carGrid}>
+          <div className={styles.carCard}>
+            <div className={styles.carImage}>🏎️</div>
+            <h3>Luxury Sports</h3>
+            <p>High-performance vehicles for the discerning enthusiast</p>
+          </div>
+          <div className={styles.carCard}>
+            <div className={styles.carImage}>🚙</div>
+            <h3>Electric Future</h3>
+            <p>Cutting-edge electric vehicles leading the charge</p>
+          </div>
+          <div className={styles.carCard}>
+            <div className={styles.carImage}>🚗</div>
+            <h3>Classic Collection</h3>
+            <p>Timeless classics that define automotive history</p>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
       <footer className={styles.footer}>
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
+        <div className={styles.footerContent}>
+          <div className={styles.footerSection}>
+            <h4>Car Expo 2024</h4>
+            <p>Premium automotive showcase featuring the world's finest vehicles</p>
+          </div>
+          <div className={styles.footerSection}>
+            <h4>Quick Links</h4>
+            <a href="#showcase">Showcase</a>
+            <a href="#events">Events</a>
+            <a href="#exhibitors">Exhibitors</a>
+          </div>
+          <div className={styles.footerSection}>
+            <h4>Contact</h4>
+            <p>info@carexpo2024.com</p>
+            <p>+1 (555) 123-4567</p>
+          </div>
+        </div>
+        <div className={styles.footerBottom}>
+          <p>&copy; 2024 Car Expo. All rights reserved.</p>
+        </div>
       </footer>
     </div>
   );
