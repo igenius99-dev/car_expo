@@ -4,6 +4,11 @@ import styles from "./page.module.css";
 export default function Home() {
   return (
     <div className={styles.page}>
+      {/* Tailwind CSS Test */}
+      <div className="bg-blue-500 text-white p-4 rounded-lg shadow-lg mb-4">
+        <h1 className="text-2xl font-bold">Car AI Project</h1>
+        <p className="text-blue-100">Tailwind CSS is working! 🚗</p>
+      </div>
       <main className={styles.main}>
         <Image
           className={styles.logo}
