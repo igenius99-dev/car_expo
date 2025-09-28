@@ -14,69 +14,64 @@ import {
 import { Group, Mesh, Vector3 } from 'three'
 import * as THREE from 'three'
 
+// Hook to track scroll
+function useScrollY() {
+  const [scrollY, setScrollY] = useState(0)
+  
+  useEffect(() => {
+    const handleScroll = () => setScrollY(window.scrollY)
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+  
+  return scrollY
+}
+
 // BMW M4 Competition Model Component
 function BMWModel({ 
   headlightsFlickering, 
   headlightsOn, 
   carVisible, 
-  engineStarted 
+  engineStarted,
+  scrollY = 0
 }: {
   headlightsFlickering: boolean
   headlightsOn: boolean
   carVisible: boolean
   engineStarted: boolean
+  scrollY?: number
 }) {
   const { scene } = useGLTF('/models/2021_bmw_m4_competition.glb')
   const groupRef = useRef<Group>(null)
-  
-  // Clone the scene to avoid issues with multiple instances
-  const clonedScene = scene.clone()
-  
-  // Find headlight meshes and car body
-  const headlightMeshes: Mesh[] = []
-  const carBody: Mesh[] = []
-  
-  clonedScene.traverse((child) => {
-    if (child instanceof Mesh) {
-      if (child.name.toLowerCase().includes('headlight') || 
-          child.name.toLowerCase().includes('light') ||
-          child.name.toLowerCase().includes('lamp')) {
-        headlightMeshes.push(child)
-      } else if (child.name.toLowerCase().includes('body') || 
-                 child.name.toLowerCase().includes('paint') ||
-                 child.name.toLowerCase().includes('exterior')) {
-        carBody.push(child)
-      }
-    }
-  })
 
   // No local state management - controlled by parent component
 
-  // Animation loop - very subtle idle vibration only
+  // Animation loop - scroll-based car movement + idle vibration
   useFrame((state) => {
-    if (groupRef.current && engineStarted) {
-      // Extremely subtle idle vibration - like engine running
-      const time = state.clock.getElapsedTime()
-      groupRef.current.position.y = Math.sin(time * 3) * 0.0005 // Very minimal
+    if (groupRef.current) {
+      // Scroll-based car Z position: move backward when scrolling down
+      const baseZ = 0
+      const maxOffset = 3
+      const offset = Math.min(scrollY / 300, maxOffset)
+      
+      // Smooth interpolate car Z position
+      groupRef.current.position.z = THREE.MathUtils.lerp(
+        groupRef.current.position.z,
+        baseZ + offset,
+        0.05
+      )
+      
+      // Subtle idle vibration when engine is started
+      if (engineStarted) {
+        const time = state.clock.getElapsedTime()
+        groupRef.current.position.y = Math.sin(time * 3) * 0.0005 // Very minimal
+      }
     }
   })
 
   return (
     <group ref={groupRef} position={[0, 0, 0]} scale={[1, 1, 1]}>
-      <primitive object={clonedScene} />
-      
-      {/* Headlight glow effect with flickering */}
-      {(headlightsOn || headlightsFlickering) && headlightMeshes.map((mesh, index) => (
-        <mesh key={index} position={mesh.position} geometry={mesh.geometry}>
-          <meshBasicMaterial 
-            color="#ffffff" 
-            transparent 
-            opacity={headlightsFlickering ? 0.3 : 0.9}
-            emissive="#ffffff"
-            emissiveIntensity={headlightsFlickering ? 0.2 : 0.8}
-          />
-        </mesh>
-      ))}
+      <primitive object={scene} />
     </group>
   )
 }
@@ -132,6 +127,7 @@ function SmokeParticles({ engineStarted }: { engineStarted: boolean }) {
           count={particleCount}
           array={positions}
           itemSize={3}
+          args={[positions, 3]}
         />
       </bufferGeometry>
       <pointsMaterial 
@@ -206,6 +202,9 @@ export default function Hero3D() {
   const [engineStarted, setEngineStarted] = useState(false)
   const [textVisible, setTextVisible] = useState(false)
   
+  // Track scroll position
+  const scrollY = useScrollY()
+  
   // Cinematic timing sequence
   useEffect(() => {
     const timers: NodeJS.Timeout[] = []
@@ -278,6 +277,7 @@ export default function Hero3D() {
             headlightsOn={headlightsOn}
             carVisible={carVisible}
             engineStarted={engineStarted}
+            scrollY={scrollY}
           />
         </Suspense>
         
