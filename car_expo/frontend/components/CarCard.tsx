@@ -3,6 +3,7 @@
 import { motion, useMotionValue, useTransform } from 'framer-motion'
 import Image from 'next/image'
 import { useState } from 'react'
+import CarRatingBadge from './CarRatingBadge'
 
 export interface Car {
   id: string
@@ -51,6 +52,8 @@ export default function CarCard({ car, onSwipeLeft, onSwipeRight, isTop, stackIn
   // Calculate scale based on stack position and preview mode
   const scale = isPreview ? 1 : (1 - (stackIndex * 0.05))
   const yOffset = isPreview ? 0 : (stackIndex * 8)
+
+  // Remove skeleton loading for individual cards to prevent stuck loading state
 
   return (
     <motion.div
@@ -130,7 +133,7 @@ export default function CarCard({ car, onSwipeLeft, onSwipeRight, isTop, stackIn
       <div className="relative h-64 w-full">
         <Image
           src={car.image}
-          alt={car.name}
+          alt={car.name || `${car.make} ${car.model}`}
           fill
           className="object-cover"
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
@@ -139,6 +142,11 @@ export default function CarCard({ car, onSwipeLeft, onSwipeRight, isTop, stackIn
         {/* Gradient overlay for better text readability */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
         
+        {/* Rating Badge */}
+        <div className="absolute top-4 left-4">
+          <CarRatingBadge car={car} />
+        </div>
+
         {/* Price Badge */}
         <div className="absolute top-4 right-4 bg-white/20 backdrop-blur-md px-4 py-2 rounded-full border border-white/30">
           <span className="text-lg font-bold text-white">

@@ -1,4 +1,4 @@
-import { Car } from '@/components/recommender/CarCard';
+import { Car } from '@/components/CarCard';
 
 export interface CarRating {
   overallScore: number; // 0-100

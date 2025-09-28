@@ -9,6 +9,7 @@ import { cars as mock } from "@/lib/mock/cars";
 import CarCard, { Car } from "../CarCard";
 import { calculateCarRating } from "@/lib/carRating";
 import CarRatingBadge from "@/components/CarRatingBadge";
+import CarLoadingBar from "@/components/CarLoadingBar";
 import { FaUndoAlt, FaHeart, FaTimes } from "react-icons/fa";
 
 export default function Recommender({ query = "" }: { query?: string }) {
@@ -88,6 +89,10 @@ export default function Recommender({ query = "" }: { query?: string }) {
     let list = convertedCars.length > 0 ? convertedCars : mock;
     console.log('Initial list length:', list.length);
     
+    // Filter out cars below $10,000
+    list = list.filter((c) => c.price >= 10000);
+    console.log('After minimum price filter ($10k):', list.length);
+    
     // User filter select (optional)
     if (filter !== "all") {
       list = list.filter((c) => c.type === filter);
@@ -120,6 +125,7 @@ export default function Recommender({ query = "" }: { query?: string }) {
   }, [filter, parsed.type, parsed.maxPrice]);
 
   const hasCars = cars.length > 0;
+  const isLoading = isLoadingOpenai || (query && !scraperResults);
 
   const handleSwipeLeft = () => {
     setCurrentIndex(prev => prev + 1);
@@ -142,6 +148,33 @@ export default function Recommender({ query = "" }: { query?: string }) {
   const resetDeck = () => {
     setCurrentIndex(0);
   };
+
+  // Show loading bar when loading
+  if (isLoading) {
+    return <CarLoadingBar isLoading={true} message="Finding your perfect cars..." />;
+  }
+
+  // Show no cars message when no cars are found
+  if (!hasCars && !isLoading) {
+    return (
+      <div className="w-full h-[600px] flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-6xl mb-4">🚗</div>
+          <h3 className="text-2xl font-bold text-white mb-2">No Cars Found</h3>
+          <p className="text-white/70 mb-6">
+            We couldn't find any cars matching your criteria. We only show cars priced $10,000 and above. Try adjusting your search or filters.
+          </p>
+          <Button 
+            variant="outline" 
+            onClick={() => window.location.reload()}
+            className="bg-white/10 border-white/30 text-white hover:bg-white/20"
+          >
+            Try Again
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   // Show completion message when deck is empty
   if (currentIndex >= cars.length && hasCars) {
