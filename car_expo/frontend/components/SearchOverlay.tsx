@@ -55,7 +55,7 @@ export default function SearchOverlay({ open, onOpenChange }: { open: boolean; o
               onFocus={() => setFocused(true)}
               onBlur={() => setFocused(false)}
               placeholder="Describe your ideal car… e.g. 'SUV under $20k, <100k miles'"
-              className="w-full bg-transparent outline-none px-4 py-3 text-base placeholder:text-muted-foreground"
+              className="w-full bg-transparent text-white font-bold outline-none px-4 py-3 text-base placeholder:text-muted-foreground"
               onKeyDown={(e) => {
                 if (e.key === "Enter") onSubmit();
               }}
@@ -71,22 +71,22 @@ export default function SearchOverlay({ open, onOpenChange }: { open: boolean; o
         </form>
 
         <div className="p-4 text-sm text-muted-foreground">
-          <div className="mb-2 font-medium text-foreground">Try prompts</div>
+          <div className="mb-4 font-medium text-white text-foreground">Try prompts</div>
           <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             <li>
-              <button type="button" onClick={() => setQuery("test")} className="w-full text-left rounded-lg border border-white/10 p-3 bg-white/5 hover:bg-white/10 transition">Test Search (shows all cars)</button>
+              <button type="button" onClick={() => setQuery("test")} className="w-full text-left text-white rounded-lg border border-white/10 p-3 bg-white/5 hover:bg-white/10 transition">Test Search (shows all cars)</button>
             </li>
             <li>
-              <button type="button" onClick={() => setQuery("Electric cars with 250+ mi range")} className="w-full text-left rounded-lg border border-white/10 p-3 bg-white/5 hover:bg-white/10 transition">Electric cars with 250+ mi range</button>
+              <button type="button" onClick={() => setQuery("Electric cars with 250+ mi range")} className="w-full text-white text-left rounded-lg border border-white/10 p-3 bg-white/5 hover:bg-white/10 transition">Electric cars with 250+ mi range</button>
             </li>
             <li>
-              <button type="button" onClick={() => setQuery("Sedans under $20k low mileage")} className="w-full text-left rounded-lg border border-white/10 p-3 bg-white/5 hover:bg-white/10 transition">Sedans under $20k • low mileage</button>
+              <button type="button" onClick={() => setQuery("Sedans under $20k low mileage")} className="w-full text-white text-left rounded-lg border border-white/10 p-3 bg-white/5 hover:bg-white/10 transition">Sedans under $20k • low mileage</button>
             </li>
             <li>
-              <button type="button" onClick={() => setQuery("Pickup trucks below $30k")} className="w-full text-left rounded-lg border border-white/10 p-3 bg-white/5 hover:bg-white/10 transition">Pickup trucks below $30k</button>
+              <button type="button" onClick={() => setQuery("Pickup trucks below $30k")} className="w-full text-white text-left rounded-lg border border-white/10 p-3 bg-white/5 hover:bg-white/10 transition">Pickup trucks below $30k</button>
             </li>
           </ul>
-          <p className="mt-4">Tip: Press Cmd+\\ (Mac) or Ctrl+\\ (Win) to toggle search.</p>
+          <p className="mt-4 text-white ">Tip: Press Cmd+\\ (Mac) or Ctrl+\\ (Win) to toggle search.</p>
         </div>
       </motion.div>
     </div>
