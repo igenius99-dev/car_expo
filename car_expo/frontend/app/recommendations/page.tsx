@@ -13,7 +13,7 @@ export default async function RecommendationsPage({
   const query = (params?.q || "").trim()
 
   return (
-    <div className="relative min-h-[calc(100dvh-4rem)] text-gray-900 dark:text-white">
+    <div className="relative h-screen overflow-hidden text-gray-900 dark:text-white">
       {/* Futuristic gradient backdrop */}
       <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(60%_50%_at_50%_0%,_oklch(0.35_0.25_300/_45%)_0%,_transparent_70%)]" />
       <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(40%_50%_at_90%_100%,_oklch(0.5_0.22_250/_30%)_0%,_transparent_70%)]" />
@@ -55,7 +55,7 @@ export default async function RecommendationsPage({
           <OpenSearchCta />
         </div>
       ) : (
-        <div className="flex h-[calc(100dvh-16rem)] w-full overflow-hidden"> 
+        <div className="flex h-[calc(100vh-12rem)] w-full overflow-hidden"> 
           {/* adjust height to account for header space */}
           
           {/* Left: Map */}

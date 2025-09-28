@@ -16,6 +16,7 @@ export default function Recommender({ query = "" }: { query?: string }) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [favorites, setFavorites] = useLocalStorage<string[]>("favorites", []);
   const [filter, setFilter] = useState<string>("all");
+  const [showFavorites, setShowFavorites] = useState(false);
 
   const [openaiData, setOpenaiData] = useState<any>(null);
   const [isLoadingOpenai, setIsLoadingOpenai] = useState(false);
@@ -152,6 +153,97 @@ export default function Recommender({ query = "" }: { query?: string }) {
   // Show loading bar when loading
   if (isLoading) {
     return <CarLoadingBar isLoading={true} message="Finding your perfect cars..." />;
+  }
+
+  // Show favorites view
+  if (showFavorites) {
+    return (
+      <div className="w-full h-[600px] flex flex-col">
+        <div className="flex items-center justify-between mb-6">
+          <div className="space-y-1">
+            <h2 className="text-2xl font-semibold text-white">Your Favorites</h2>
+            <p className="text-white/70">{favorites.length} cars saved</p>
+          </div>
+          <Button 
+            variant="outline" 
+            onClick={() => setShowFavorites(false)}
+            className="bg-white/10 border-white/30 text-white hover:bg-white/20"
+          >
+            Back to Swiping
+          </Button>
+        </div>
+
+        {savedCars.length === 0 ? (
+          <div className="flex-1 flex items-center justify-center">
+            <div className="text-center">
+              <div className="text-6xl mb-4">💔</div>
+              <h3 className="text-2xl font-bold text-white mb-2">No Favorites Yet</h3>
+              <p className="text-white/70 mb-6">
+                Start swiping to save cars you like!
+              </p>
+              <Button 
+                onClick={() => setShowFavorites(false)}
+                className="bg-blue-600 hover:bg-blue-700 text-white"
+              >
+                Start Swiping
+              </Button>
+            </div>
+          </div>
+        ) : (
+          <div className="flex-1 overflow-y-auto bg-gradient-to-br from-black/20 via-transparent to-black/20">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-6 p-6">
+              {savedCars.map((car, index) => (
+                <motion.div
+                  key={car.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.1 }}
+                  className="relative"
+                >
+                  <div className="w-full h-64 rounded-2xl overflow-hidden relative cursor-pointer group">
+                    <div 
+                      onClick={() => {
+                        if (car.listing_url) {
+                          window.open(car.listing_url, '_blank', 'noopener,noreferrer');
+                        }
+                      }}
+                      className="w-full h-full"
+                    >
+                      <CarCard
+                        car={car}
+                        onSwipeLeft={() => {}}
+                        onSwipeRight={() => {}}
+                        isTop={false}
+                        stackIndex={0}
+                        isPreview={false}
+                      />
+                    </div>
+                    
+                    {/* Remove from favorites button */}
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation(); // Prevent card click when clicking remove button
+                        toggleSave(car.id);
+                      }}
+                      className="absolute top-2 right-2 w-8 h-8 rounded-full bg-red-500/90 hover:bg-red-500 flex items-center justify-center text-white shadow-lg transition-colors z-10 border border-white/30"
+                    >
+                      <FaTimes className="w-3 h-3" />
+                    </button>
+                    
+                    {/* Click indicator */}
+                    {car.listing_url && (
+                      <div className="absolute bottom-2 left-2 bg-blue-500/90 text-white text-xs px-2 py-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10">
+                        Click to view on Carfax
+                      </div>
+                    )}
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    );
   }
 
   // Show no cars message when no cars are found
@@ -303,13 +395,18 @@ export default function Recommender({ query = "" }: { query?: string }) {
         {currentIndex + 1} / {cars.length}
       </div>
 
-      <div className="absolute top-6 right-6 
-                      bg-white/60 backdrop-blur-lg 
-                      px-3 py-1 rounded-full text-sm font-semibold 
-                      shadow-md border border-white/30 flex items-center gap-1">
-        <FaHeart className="text-pink-500" />
+      <button
+        onClick={() => setShowFavorites(true)}
+        className={`absolute top-6 right-6 
+                   backdrop-blur-lg 
+                   px-3 py-1 rounded-full text-sm font-semibold 
+                   shadow-md border border-white/30 flex items-center gap-1
+                   hover:bg-white/80 transition-colors cursor-pointer
+                   ${favorites.length > 0 ? 'bg-white/60' : 'bg-white/30'}`}
+      >
+        <FaHeart className={`${favorites.length > 0 ? 'text-pink-500' : 'text-pink-300'}`} />
         {favorites.length}
-      </div>
+      </button>
     </div>
 
     {/* Action Buttons */}
