@@ -1,23 +1,23 @@
 {
-    "search_config": {
-      "make": "honda",
-      "model": "accord",
-      "max_pages": 10,
-      "rows_per_page": 24
-    },
-    "location_config": {
-      "zip_code": "85281",
-      "city": "Tempe",
-      "state": "AZ",
-      "radius_miles": 200
-    },
-    "output_config": {
-      "save_to_json": true,
-      "filename": "carfax_search_results.json"
-    },
-    "scraping_config": {
-      "delay_between_requests": 2,
-      "timeout_seconds": 10,
-      "max_retries": 3
-    }
+  "search_config": {
+    "make": "lamborghini",
+    "model": "aventador",
+    "max_pages": 10,
+    "rows_per_page": 24
+  },
+  "location_config": {
+    "zip_code": "85281",
+    "city": "Tempe",
+    "state": "AZ",
+    "radius_miles": 200
+  },
+  "output_config": {
+    "save_to_json": true,
+    "filename": "carfax_search_results.json"
+  },
+  "scraping_config": {
+    "delay_between_requests": 2,
+    "timeout_seconds": 10,
+    "max_retries": 3
   }
+}

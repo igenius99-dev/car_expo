@@ -65,7 +65,7 @@ class CarfaxTempeScraper:
                 "zip_code": "85281",
                 "city": "Tempe",
                 "state": "AZ",
-                "radius_miles": 200
+                "radius_miles": 50
             },
             "output_config": {
                 "save_to_json": True,
