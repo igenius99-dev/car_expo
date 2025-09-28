@@ -112,16 +112,20 @@ function FeaturesSection() {
           </p>
         </motion.div>
 
-        <div className="grid gap-6 md:gap-8 grid-cols-1 md:grid-cols-3 max-w-6xl mx-auto">
+        <div className="grid gap-8 md:gap-12 grid-cols-1 md:grid-cols-3 max-w-7xl mx-auto px-4">
           {features.map((feature, index) => (
             <motion.div
               key={feature.title}
-              initial={{ opacity: 0, y: 60 }}
-              animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 60 }}
+              initial={{ opacity: 0, y: 80, scale: 0.9 }}
+              animate={isInView ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: 80, scale: 0.9 }}
               transition={{ 
                 duration: 0.8, 
                 delay: index * 0.2,
                 ease: "easeOut" 
+              }}
+              whileHover={{ 
+                scale: 1.05,
+                transition: { duration: 0.3, ease: "easeOut" }
               }}
             >
               <FeatureCard IconComponent={feature.icon} title={feature.title} desc={feature.desc} />
@@ -197,22 +201,56 @@ function FooterSection() {
 }
 
 function FeatureCard({ IconComponent, title, desc }: { IconComponent: any; title: string; desc: string }) {
+  // Split title into first word and rest
+  const [firstWord, ...restWords] = title.split(' ');
+  const restTitle = restWords.join(' ');
+
+  // Get background image for first word
+  const getBackgroundImage = (word: string) => {
+    switch (word.toLowerCase()) {
+      case 'swipe':
+        return 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+      case 'favorites':
+        return 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)';
+      case 'quick':
+        return 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)';
+      default:
+        return 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+    }
+  };
+
   return (
-    <div className="rounded-xl border border-gray-700/50 bg-[#111]/80 backdrop-blur-sm p-8 shadow-lg hover:shadow-xl hover:shadow-blue-500/20 hover:-translate-y-2 hover:border-blue-500/30 transition-all duration-300 group">
+    <div className="rounded-xl border border-gray-700/50 bg-[#111]/80 backdrop-blur-sm p-10 shadow-lg hover:shadow-xl hover:shadow-blue-500/20 hover:border-blue-500/30 transition-all duration-300 group relative overflow-hidden">
+      {/* Gradient border glow on hover */}
+      <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-blue-500/20 via-purple-500/20 to-blue-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10 blur-sm"></div>
+      
       {/* Circular Icon Badge */}
-      <div className="flex justify-center mb-6">
-        <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-500/20 to-purple-500/20 border border-blue-500/30 flex items-center justify-center group-hover:scale-110 group-hover:border-blue-400/50 transition-all duration-300">
-          <IconComponent className="w-8 h-8 text-blue-400 group-hover:text-blue-300 transition-colors duration-300" />
+      <div className="flex justify-center mb-8">
+        <div className="w-20 h-20 rounded-full bg-gradient-to-br from-blue-500/20 to-purple-500/20 border border-blue-500/30 flex items-center justify-center group-hover:scale-110 group-hover:border-blue-400/50 transition-all duration-300">
+          <IconComponent className="w-10 h-10 text-blue-400 group-hover:text-blue-300 transition-colors duration-300" />
         </div>
       </div>
       
-      {/* Title */}
-      <div className="text-xl font-semibold text-white mb-4 text-center group-hover:text-blue-100 transition-colors duration-300">
-        {title}
+      {/* Title with Image-filled Text */}
+      <div className="text-2xl font-bold mb-6 text-center">
+        <span 
+          className="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-400"
+          style={{ 
+            backgroundImage: getBackgroundImage(firstWord),
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            backgroundClip: 'text'
+          }}
+        >
+          {firstWord}
+        </span>
+        <span className="text-white group-hover:text-blue-100 transition-colors duration-300">
+          {' '}{restTitle}
+        </span>
       </div>
       
       {/* Description */}
-      <p className="text-gray-300 leading-relaxed text-center group-hover:text-gray-200 transition-colors duration-300">
+      <p className="text-gray-300 leading-relaxed text-center group-hover:text-gray-200 transition-colors duration-300 text-lg">
         {desc}
       </p>
     </div>
