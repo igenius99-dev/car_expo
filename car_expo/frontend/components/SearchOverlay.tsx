@@ -24,6 +24,7 @@ export default function SearchOverlay({ open, onOpenChange }: { open: boolean; o
     if (e) e.preventDefault();
     const q = query.trim();
     if (!q) return;
+    console.log('Navigating to:', `/recommendations?q=${encodeURIComponent(q)}`);
     router.push(`/recommendations?q=${encodeURIComponent(q)}`);
     onOpenChange(false);
   };
@@ -73,7 +74,7 @@ export default function SearchOverlay({ open, onOpenChange }: { open: boolean; o
           <div className="mb-2 font-medium text-foreground">Try prompts</div>
           <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             <li>
-              <button type="button" onClick={() => setQuery("Popular SUVs under $25k")} className="w-full text-left rounded-lg border border-white/10 p-3 bg-white/5 hover:bg-white/10 transition">Popular SUVs under $25k</button>
+              <button type="button" onClick={() => setQuery("test")} className="w-full text-left rounded-lg border border-white/10 p-3 bg-white/5 hover:bg-white/10 transition">Test Search (shows all cars)</button>
             </li>
             <li>
               <button type="button" onClick={() => setQuery("Electric cars with 250+ mi range")} className="w-full text-left rounded-lg border border-white/10 p-3 bg-white/5 hover:bg-white/10 transition">Electric cars with 250+ mi range</button>

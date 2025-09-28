@@ -5,7 +5,6 @@ import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
 import { Car, Heart, Search } from "lucide-react";
 import Hero3D from "@/components/Hero3D";
-import SwipeDeck from "@/components/SwipeDeck";
 import NightSky from "@/components/ShootingStars";
 
 export default function Home() {
@@ -23,16 +22,6 @@ export default function Home() {
       {/* Features Section */}
       <FeaturesSection />
 
-      {/* Car Swipe Deck */}
-      <section id="swipe" className="w-full py-12 md:py-16 relative z-10">
-        <div className="text-center mb-8 px-6">
-          <h2 className="text-3xl font-bold text-white mb-4">Swipe Your Dream Car</h2>
-          <p className="text-gray-300 max-w-2xl mx-auto">
-            Swipe right to save your favorites, left to skip. Find the perfect car for you!
-          </p>
-        </div>
-        <SwipeDeck />
-      </section>
 
       {/* Footer */}
       <FooterSection />
