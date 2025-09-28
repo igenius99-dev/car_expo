@@ -1,0 +1,9 @@
+<svg width="300" height="200" viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+  <rect width="300" height="200" fill="#f3f4f6"/>
+  <rect x="50" y="80" width="200" height="60" rx="10" fill="#e5e7eb"/>
+  <circle cx="80" cy="160" r="20" fill="#9ca3af"/>
+  <circle cx="220" cy="160" r="20" fill="#9ca3af"/>
+  <rect x="60" y="70" width="180" height="40" rx="5" fill="#d1d5db"/>
+  <rect x="70" y="60" width="160" height="20" rx="3" fill="#9ca3af"/>
+  <text x="150" y="120" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#6b7280">Car Image</text>
+</svg>

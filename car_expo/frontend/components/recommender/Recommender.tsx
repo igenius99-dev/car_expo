@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useLocalStorage } from "@/lib/hooks/useLocalStorage";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { cars as mock } from "@/lib/mock/cars";
-import CarCard, { Car } from "./CarCard";
+import CarCard, { Car } from "../CarCard";
 import { calculateCarRating } from "@/lib/carRating";
 import CarRatingBadge from "@/components/CarRatingBadge";
 import { FaUndoAlt, FaHeart, FaTimes } from "react-icons/fa";

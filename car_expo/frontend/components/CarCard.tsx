@@ -6,14 +6,28 @@ import { useState } from 'react'
 
 export interface Car {
   id: string
-  name: string
-  price: string
+  name?: string
+  make?: string
+  model?: string
+  price: string | number
   year: number
-  mileage: string
-  fuelType: string
-  transmission: string
+  mileage?: string
+  fuelType?: string
+  transmission?: string
   image: string
-  specs: string[]
+  specs?: string[]
+  type?: string
+  location?: string
+  dealer?: string
+  trim?: string
+  exterior_color?: string
+  interior_color?: string
+  engine?: string
+  drivetrain?: string
+  no_accidents?: boolean
+  service_records?: number
+  listing_url?: string
+  monthly_payment?: string
 }
 
 interface CarCardProps {
@@ -58,8 +72,8 @@ export default function CarCard({ car, onSwipeLeft, onSwipeRight, isTop, stackIn
         opacity: isPreview ? 1 : (isTop ? opacity : 1)
       }}
       drag={isTop && !isPreview ? "x" : false}
-      dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
-      dragElastic={0.2}
+      dragConstraints={{ left: -400, right: 400 }}
+      dragElastic={0.1}
       onDrag={(_, info) => {
         x.set(info.offset.x)
         if (info.offset.x > 50) {
@@ -73,14 +87,22 @@ export default function CarCard({ car, onSwipeLeft, onSwipeRight, isTop, stackIn
       onDragEnd={(_, info) => {
         const threshold = 150
         if (info.offset.x > threshold) {
-          console.log(`Liked ❤️ ${car.name}`)
+          console.log(`Liked ❤️ ${car.name || `${car.make} ${car.model}`}`)
+          // Add haptic feedback if available
+          if (navigator.vibrate) {
+            navigator.vibrate(50)
+          }
           onSwipeRight()
         } else if (info.offset.x < -threshold) {
-          console.log(`Skipped ❌ ${car.name}`)
+          console.log(`Skipped ❌ ${car.name || `${car.make} ${car.model}`}`)
+          // Add haptic feedback if available
+          if (navigator.vibrate) {
+            navigator.vibrate([50, 50, 50])
+          }
           onSwipeLeft()
         } else {
-          // Snap back to center
-          x.set(0)
+          // Snap back to center with spring animation
+          x.set(0, { type: "spring", stiffness: 300, damping: 30 })
           setDragDirection(null)
         }
       }}
@@ -119,47 +141,61 @@ export default function CarCard({ car, onSwipeLeft, onSwipeRight, isTop, stackIn
         
         {/* Price Badge */}
         <div className="absolute top-4 right-4 bg-white/20 backdrop-blur-md px-4 py-2 rounded-full border border-white/30">
-          <span className="text-lg font-bold text-white">{car.price}</span>
+          <span className="text-lg font-bold text-white">
+            ${typeof car.price === 'number' ? car.price.toLocaleString() : car.price}
+          </span>
         </div>
       </div>
 
       {/* Car Details */}
       <div className="p-6 bg-gradient-to-b from-transparent to-black/20">
         {/* Car Name */}
-        <h3 className="text-2xl font-bold text-white mb-2 drop-shadow-lg">{car.name}</h3>
+        <h3 className="text-2xl font-bold text-white mb-2 drop-shadow-lg">
+          {car.name || `${car.make} ${car.model}`}
+        </h3>
         
         {/* Year */}
         <p className="text-white/80 mb-4 text-lg">{car.year}</p>
         
         {/* Specs Grid */}
         <div className="grid grid-cols-2 gap-4 mb-6">
-          <div className="flex items-center space-x-2">
-            <div className="w-2 h-2 bg-blue-400 rounded-full shadow-sm"></div>
-            <span className="text-sm text-white/90">{car.mileage}</span>
-          </div>
-          <div className="flex items-center space-x-2">
-            <div className="w-2 h-2 bg-green-400 rounded-full shadow-sm"></div>
-            <span className="text-sm text-white/90">{car.fuelType}</span>
-          </div>
-          <div className="flex items-center space-x-2">
-            <div className="w-2 h-2 bg-purple-400 rounded-full shadow-sm"></div>
-            <span className="text-sm text-white/90">{car.transmission}</span>
-          </div>
-          <div className="flex items-center space-x-2">
-            <div className="w-2 h-2 bg-orange-400 rounded-full shadow-sm"></div>
-            <span className="text-sm text-white/90">Auto</span>
-          </div>
+          {car.mileage && (
+            <div className="flex items-center space-x-2">
+              <div className="w-2 h-2 bg-blue-400 rounded-full shadow-sm"></div>
+              <span className="text-sm text-white/90">{car.mileage}</span>
+            </div>
+          )}
+          {car.fuelType && (
+            <div className="flex items-center space-x-2">
+              <div className="w-2 h-2 bg-green-400 rounded-full shadow-sm"></div>
+              <span className="text-sm text-white/90">{car.fuelType}</span>
+            </div>
+          )}
+          {car.transmission && (
+            <div className="flex items-center space-x-2">
+              <div className="w-2 h-2 bg-purple-400 rounded-full shadow-sm"></div>
+              <span className="text-sm text-white/90">{car.transmission}</span>
+            </div>
+          )}
+          {car.location && (
+            <div className="flex items-center space-x-2">
+              <div className="w-2 h-2 bg-orange-400 rounded-full shadow-sm"></div>
+              <span className="text-sm text-white/90">{car.location}</span>
+            </div>
+          )}
         </div>
 
         {/* Additional Specs */}
-        <div className="space-y-2">
-          {car.specs.map((spec, index) => (
-            <div key={index} className="flex items-center space-x-2">
-              <div className="w-1.5 h-1.5 bg-white/60 rounded-full"></div>
-              <span className="text-sm text-white/80">{spec}</span>
-            </div>
-          ))}
-        </div>
+        {car.specs && car.specs.length > 0 && (
+          <div className="space-y-2">
+            {car.specs.map((spec, index) => (
+              <div key={index} className="flex items-center space-x-2">
+                <div className="w-1.5 h-1.5 bg-white/60 rounded-full"></div>
+                <span className="text-sm text-white/80">{spec}</span>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Swipe Feedback Overlays */}

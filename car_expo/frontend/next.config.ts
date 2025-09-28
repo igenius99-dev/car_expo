@@ -9,6 +9,12 @@ const nextConfig: NextConfig = {
         port: '',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'carfax-img.vast.com',
+        port: '',
+        pathname: '/**',
+      },
     ],
   },
 };
