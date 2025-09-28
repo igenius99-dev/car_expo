@@ -229,10 +229,10 @@ export default function Hero3D() {
       setCarVisible(true)
     }, 2000))
     
-    // 3s: Car fully visible, then fade in text + button
+    // 2.5s: Text fades in after headlights are fully on (1.5s + 1s delay)
     timers.push(setTimeout(() => {
       setTextVisible(true)
-    }, 3000))
+    }, 2500))
     
     return () => {
       timers.forEach(timer => clearTimeout(timer))
@@ -288,24 +288,25 @@ export default function Hero3D() {
         <Sparkles count={50} scale={15} size={1} speed={0.3} />
       </Canvas>
       
-      {/* Overlay Content - Fades in after car is fully visible */}
+      {/* Overlay Content - Fades in after headlights are fully on */}
       <div className={`absolute inset-0 flex items-center justify-center pointer-events-none transition-opacity duration-1000 ${textVisible ? 'opacity-100' : 'opacity-0'}`}>
-        <div className="text-center text-white z-10 pointer-events-auto">
+        {/* Subtle gradient overlay for text readability */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/20 pointer-events-none" />
+        
+        <div className="text-center text-white z-10 pointer-events-auto relative">
           {/* Main Title */}
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-4 tracking-tight">
-            Find your perfect match
-            <br />
-            <span className="text-gray-300">in the dark</span>
+            Find your dream ride.
           </h1>
           
           {/* Subtitle */}
           <p className="text-lg md:text-xl lg:text-2xl text-gray-300 mb-8 max-w-2xl mx-auto">
-            AutoMatch — swipe your dream ride
+            AutoMatch — swipe, save, drive.
           </p>
           
           {/* CTA Button */}
           <button 
-            className="bg-[#4d94ff] hover:bg-[#3d7ce6] text-white font-semibold py-4 px-8 rounded-full text-lg md:text-xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
+            className="bg-white hover:bg-[#f0f0f0] text-black font-semibold py-4 px-8 rounded-full text-lg md:text-xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-2xl"
             onClick={() => {
               // Scroll to the swipe section
               const swipeSection = document.getElementById('swipe')
@@ -317,13 +318,11 @@ export default function Hero3D() {
               }
             }}
           >
-            Start Swiping 🚀
+            Start Your Engine
           </button>
         </div>
       </div>
       
-      {/* Subtle gradient overlay for better text readability */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-black/20 pointer-events-none" />
     </div>
   )
 }
