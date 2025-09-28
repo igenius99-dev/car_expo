@@ -6,12 +6,13 @@ export const metadata = {
   description: "Swipe through personalized car recommendations based on your search query.",
 };
 
-export default function RecommendationsPage({
+export default async function RecommendationsPage({
   searchParams,
 }: {
-  searchParams: { q?: string };
+  searchParams: Promise<{ q?: string }>;
 }) {
-  const query = (searchParams?.q || "").trim();
+  const params = await searchParams;
+  const query = (params?.q || "").trim();
 
   return (
     <div className="relative min-h-[calc(100dvh-4rem)]">

@@ -1,17 +1,23 @@
 "use client";
 import { useMemo, useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { RotateCcw } from "lucide-react";
+import { RotateCcw, Star } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLocalStorage } from "@/lib/hooks/useLocalStorage";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { cars as mock } from "@/lib/mock/cars";
 import CarCard, { Car } from "./CarCard";
+import { calculateCarRating } from "@/lib/carRating";
+import CarRatingBadge from "@/components/CarRatingBadge";
 
 export default function Recommender({ query = "" }: { query?: string }) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [favorites, setFavorites] = useLocalStorage<string[]>("favorites", []);
   const [filter, setFilter] = useState<string>("all");
+
+  const [openaiData, setOpenaiData] = useState<any>(null);
+  const [isLoadingOpenai, setIsLoadingOpenai] = useState(false);
+  const [scraperResults, setScraperResults] = useState<any>(null);
 
   const parsed = useMemo(() => {
     const result = parseQuery(query);
@@ -19,9 +25,68 @@ export default function Recommender({ query = "" }: { query?: string }) {
     return result;
   }, [query]);
 
+  // Call OpenAI API when query changes
+  useEffect(() => {
+    if (query && query.trim()) {
+      setIsLoadingOpenai(true);
+      
+      fetch('/api/parse-query', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ query }),
+      })
+      .then(response => response.json())
+      .then(data => {
+        console.log('OpenAI API Response:', data);
+        setOpenaiData(data);
+        setScraperResults(data.scraperResults);
+        setIsLoadingOpenai(false);
+      })
+      .catch(error => {
+        console.error('Error calling OpenAI API:', error);
+        setIsLoadingOpenai(false);
+      });
+    } else {
+      setOpenaiData(null);
+    }
+  }, [query]);
+
+  // Convert scraper results to the format expected by the UI
+  const convertedCars = useMemo(() => {
+    if (!scraperResults?.success || !scraperResults.results) {
+      return [];
+    }
+    
+    return scraperResults.results.map((car: any, index: number) => ({
+      id: car.vin || `car-${index}`,
+      make: car.make,
+      model: car.model,
+      year: parseInt(car.year) || 2023,
+      price: parseInt(car.price?.replace(/[$,]/g, '') || '0'),
+      image: car.image_url || 'https://images.unsplash.com/photo-1549921296-3ecf9c4a9254?auto=format&fit=crop&w=1400&q=60',
+      type: car.body_style?.toLowerCase() || 'sedan',
+      mileage: car.mileage,
+      location: car.location,
+      dealer: car.dealer,
+      trim: car.trim,
+      exterior_color: car.exterior_color,
+      interior_color: car.interior_color,
+      engine: car.engine,
+      transmission: car.transmission,
+      drivetrain: car.drivetrain,
+      no_accidents: car.no_accidents,
+      service_records: car.service_records,
+      listing_url: car.listing_url,
+      monthly_payment: car.monthly_payment
+    }));
+  }, [scraperResults]);
+
   const cars = useMemo(() => {
-    let list = mock;
+    let list = convertedCars.length > 0 ? convertedCars : mock;
     console.log('Initial list length:', list.length);
+    
     // User filter select (optional)
     if (filter !== "all") {
       list = list.filter((c) => c.type === filter);
@@ -36,9 +101,17 @@ export default function Recommender({ query = "" }: { query?: string }) {
       list = list.filter((c) => c.price <= parsed.maxPrice!);
       console.log('After price filter:', list.length);
     }
-    console.log('Final cars:', list.length);
+    
+    // Sort by rating score (highest rated first)
+    list = list.sort((a, b) => {
+      const ratingA = calculateCarRating(a);
+      const ratingB = calculateCarRating(b);
+      return ratingB.overallScore - ratingA.overallScore;
+    });
+    
+    console.log('Final cars (sorted by rating):', list.length);
     return list;
-  }, [filter, parsed]);
+  }, [filter, parsed, convertedCars]);
 
   // Reset deck index when filters or parsed query change to avoid out-of-range
   useEffect(() => {
@@ -63,7 +136,7 @@ export default function Recommender({ query = "" }: { query?: string }) {
     setFavorites((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
   };
 
-  const savedCars = useMemo(() => mock.filter((c) => favorites.includes(c.id)), [favorites]);
+  const savedCars = useMemo(() => cars.filter((c) => favorites.includes(c.id)), [favorites, cars]);
 
   const resetDeck = () => {
     setCurrentIndex(0);
@@ -116,8 +189,39 @@ export default function Recommender({ query = "" }: { query?: string }) {
           <h2 className="text-2xl font-semibold">Swipe Your Dream Car</h2>
           <p className="text-muted-foreground">Swipe right to save, left to skip. Use Cmd+\\ to refine your query.</p>
           <p className="text-xs text-muted-foreground" aria-live="polite">{hasCars ? `${cars.length} result${cars.length === 1 ? "" : "s"} found` : "No results"}</p>
+          
+          {/* OpenAI Status */}
+          {isLoadingOpenai && (
+            <p className="text-xs text-blue-400">🤖 Analyzing query with AI...</p>
+          )}
+          {openaiData && openaiData.success && (
+            <div className="text-xs text-green-400">
+              <p>✅ AI extracted: {openaiData.parsedData.make} {openaiData.parsedData.model}</p>
+              {openaiData.parsedData.year && <p>Year: {openaiData.parsedData.year}</p>}
+              {openaiData.parsedData.type && <p>Type: {openaiData.parsedData.type}</p>}
+              {openaiData.parsedData.price && <p>Price: {openaiData.parsedData.price}</p>}
+              {openaiData.configUpdated && (
+                <p className="text-yellow-400">🔧 Updated scraper config with {openaiData.parsedData.make} {openaiData.parsedData.model}</p>
+              )}
+            </div>
+          )}
+          
+          {/* Scraper Status */}
+          {scraperResults && (
+            <div className="text-xs">
+              {scraperResults.success ? (
+                <p className="text-green-400">🕷️ Found {scraperResults.carCount} real cars from Carfax</p>
+              ) : (
+                <p className="text-red-400">❌ Scraper failed: {scraperResults.error}</p>
+              )}
+            </div>
+          )}
         </div>
         <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 text-sm text-blue-400">
+            <Star size={16} />
+            <span>Sorted by rating</span>
+          </div>
           <Select value={filter} onValueChange={setFilter}>
             <SelectTrigger className="w-40" aria-label="Filter by type"><SelectValue placeholder="Filter" /></SelectTrigger>
             <SelectContent>
@@ -345,12 +449,35 @@ export default function Recommender({ query = "" }: { query?: string }) {
                 <div className="relative aspect-video">
                   <img src={c.image} alt={`${c.make} ${c.model}`} className="w-full h-full object-cover" />
                 </div>
-                <div className="p-3 flex items-center justify-between">
-                  <div>
-                    <div className="font-medium">{c.year} {c.make} {c.model}</div>
-                    <div className="text-xs text-muted-foreground">${c.price.toLocaleString()} • {c.type.toUpperCase()}</div>
+                <div className="p-3">
+                  <div className="flex items-center justify-between mb-2">
+                    <div>
+                      <div className="font-medium">{c.year} {c.make} {c.model}</div>
+                      <div className="text-xs text-muted-foreground">${c.price.toLocaleString()} • {c.type.toUpperCase()}</div>
+                    </div>
+                    <Button variant="ghost" size="sm" onClick={() => toggleSave(c.id)}>Remove</Button>
                   </div>
-                  <Button variant="ghost" size="sm" onClick={() => toggleSave(c.id)}>Remove</Button>
+                  
+                  {/* Additional info for saved cars */}
+                  <div className="text-xs text-muted-foreground space-y-1">
+                    {c.mileage && <div>{c.mileage}</div>}
+                    {c.location && <div>📍 {c.location}</div>}
+                    {c.dealer && <div>🏪 {c.dealer}</div>}
+                    {c.exterior_color && <div>🎨 {c.exterior_color}</div>}
+                    {c.monthly_payment && c.monthly_payment.amount && (
+                      <div className="text-green-400 font-medium">
+                        ${Number(c.monthly_payment.amount).toFixed(0)}/mo
+                      </div>
+                    )}
+                  </div>
+                  
+                  {/* Safety indicators */}
+                  {(c.no_accidents || c.service_records) && (
+                    <div className="mt-2 flex gap-1">
+                      {c.no_accidents && <span className="text-xs bg-green-500/20 text-green-400 px-1 py-0.5 rounded">✅</span>}
+                      {c.service_records && <span className="text-xs bg-blue-500/20 text-blue-400 px-1 py-0.5 rounded">📋</span>}
+                    </div>
+                  )}
                 </div>
               </div>
             ))}
