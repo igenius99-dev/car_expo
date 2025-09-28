@@ -129,42 +129,97 @@ export default function SwipeDeck() {
   }
 
   return (
-    <div className="relative w-full max-w-sm mx-auto">
-      {/* Main Container with Cards and Background */}
-      <div className="relative h-[600px] mb-8">
-        {/* Cinematic Background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-black via-gray-900 to-black rounded-3xl overflow-hidden">
-          {/* Animated background elements */}
-          <div className="absolute inset-0 opacity-20">
-            <div className="absolute top-1/4 left-1/4 w-32 h-32 bg-blue-500/30 rounded-full blur-3xl animate-pulse"></div>
-            <div className="absolute bottom-1/4 right-1/4 w-24 h-24 bg-purple-500/30 rounded-full blur-2xl animate-pulse delay-1000"></div>
-            <div className="absolute top-1/2 left-1/2 w-16 h-16 bg-green-500/20 rounded-full blur-xl animate-pulse delay-500"></div>
-          </div>
+    <div className="relative w-full h-[600px] mb-8">
+      {/* Full Width Container */}
+      <div className="relative w-full h-full flex items-center justify-center px-4">
+        
+        {/* Left Preview (Previous Card) */}
+        <div className="absolute left-0 top-1/2 transform -translate-y-1/2 w-[30%] h-[80%] z-10">
+          {currentIndex > 0 ? (
+            <motion.div
+              key={`left-${currentIndex}`}
+              initial={{ x: -100, opacity: 0, scale: 0.8 }}
+              animate={{ x: 0, opacity: 0.4, scale: 0.8 }}
+              exit={{ x: -100, opacity: 0, scale: 0.8 }}
+              transition={{ duration: 0.4, ease: "easeOut" }}
+              className="w-full h-full relative"
+            >
+              <CarCard
+                car={cars[currentIndex - 1]}
+                onSwipeLeft={() => {}}
+                onSwipeRight={() => {}}
+                isTop={false}
+                stackIndex={-1}
+                isPreview={true}
+                previewSide="left"
+              />
+              {/* Blur overlay for left preview */}
+              <div className="absolute inset-0 bg-black/20 backdrop-blur-sm rounded-3xl" />
+            </motion.div>
+          ) : (
+            <div className="w-full h-full bg-black/10 rounded-3xl border border-white/10" />
+          )}
         </div>
 
-        {/* Stack of cards */}
-        <AnimatePresence mode="wait">
-          {cars.slice(currentIndex, currentIndex + 3).map((car, index) => (
-            <CarCard
-              key={car.id}
-              car={car}
-              onSwipeLeft={handleSwipeLeft}
-              onSwipeRight={handleSwipeRight}
-              isTop={index === 0}
-              stackIndex={index}
-            />
-          ))}
-        </AnimatePresence>
+        {/* Center Main Card */}
+        <div className="relative w-[40%] h-[90%] z-20">
+          <AnimatePresence mode="wait">
+            {cars[currentIndex] && (
+              <motion.div
+                key={cars[currentIndex].id}
+                initial={{ scale: 0.9, opacity: 0, x: 0 }}
+                animate={{ scale: 1, opacity: 1, x: 0 }}
+                exit={{ scale: 0.9, opacity: 0, x: 300 }}
+                transition={{ duration: 0.5, ease: "easeInOut" }}
+                className="w-full h-full"
+              >
+                <CarCard
+                  car={cars[currentIndex]}
+                  onSwipeLeft={handleSwipeLeft}
+                  onSwipeRight={handleSwipeRight}
+                  isTop={true}
+                  stackIndex={0}
+                />
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+
+        {/* Right Preview (Next Card) */}
+        <div className="absolute right-0 top-1/2 transform -translate-y-1/2 w-[30%] h-[80%] z-10">
+          {currentIndex < cars.length - 1 ? (
+            <motion.div
+              key={`right-${currentIndex}`}
+              initial={{ x: 100, opacity: 0, scale: 0.8 }}
+              animate={{ x: 0, opacity: 0.6, scale: 0.8 }}
+              exit={{ x: 100, opacity: 0, scale: 0.8 }}
+              transition={{ duration: 0.4, ease: "easeOut" }}
+              className="w-full h-full relative"
+            >
+              <CarCard
+                car={cars[currentIndex + 1]}
+                onSwipeLeft={() => {}}
+                onSwipeRight={() => {}}
+                isTop={false}
+                stackIndex={1}
+                isPreview={true}
+                previewSide="right"
+              />
+            </motion.div>
+          ) : (
+            <div className="w-full h-full bg-black/10 rounded-3xl border border-white/10" />
+          )}
+        </div>
 
         {/* Progress Indicator */}
-        <div className="absolute top-6 left-1/2 transform -translate-x-1/2 bg-white/10 backdrop-blur-md px-4 py-2 rounded-full border border-white/20 z-20">
+        <div className="absolute top-6 left-1/2 transform -translate-x-1/2 bg-white/10 backdrop-blur-md px-4 py-2 rounded-full border border-white/20 z-30">
           <span className="text-sm font-medium text-white">
             {currentIndex + 1} / {cars.length}
           </span>
         </div>
 
         {/* Favorites Counter */}
-        <div className="absolute top-6 right-6 bg-white/10 backdrop-blur-md px-4 py-2 rounded-full border border-white/20 z-20">
+        <div className="absolute top-6 right-6 bg-white/10 backdrop-blur-md px-4 py-2 rounded-full border border-white/20 z-30">
           <span className="text-sm font-medium text-white">
             ❤️ {favorites.length}
           </span>
@@ -172,7 +227,7 @@ export default function SwipeDeck() {
       </div>
 
       {/* Action Buttons - Positioned below cards */}
-      <div className="flex justify-center items-center space-x-8 z-30 relative">
+      <div className="flex justify-center items-center space-x-12 z-30 relative">
         {/* Nope Button */}
         <motion.button
           onClick={handleSwipeLeft}

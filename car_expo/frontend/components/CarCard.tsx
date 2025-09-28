@@ -22,9 +22,11 @@ interface CarCardProps {
   onSwipeRight: () => void
   isTop: boolean
   stackIndex?: number
+  isPreview?: boolean
+  previewSide?: 'left' | 'right'
 }
 
-export default function CarCard({ car, onSwipeLeft, onSwipeRight, isTop, stackIndex = 0 }: CarCardProps) {
+export default function CarCard({ car, onSwipeLeft, onSwipeRight, isTop, stackIndex = 0, isPreview = false, previewSide }: CarCardProps) {
   const [dragDirection, setDragDirection] = useState<'left' | 'right' | null>(null)
   const x = useMotionValue(0)
   
@@ -32,30 +34,30 @@ export default function CarCard({ car, onSwipeLeft, onSwipeRight, isTop, stackIn
   const rotate = useTransform(x, [-300, 300], [-15, 15])
   const opacity = useTransform(x, [-300, -50, 0, 50, 300], [0, 1, 1, 1, 0])
   
-  // Calculate scale based on stack position
-  const scale = 1 - (stackIndex * 0.05)
-  const yOffset = stackIndex * 8
+  // Calculate scale based on stack position and preview mode
+  const scale = isPreview ? 1 : (1 - (stackIndex * 0.05))
+  const yOffset = isPreview ? 0 : (stackIndex * 8)
 
   return (
     <motion.div
       className={`absolute inset-0 rounded-3xl overflow-hidden ${
-        isTop ? 'cursor-grab active:cursor-grabbing' : 'pointer-events-none'
+        isTop && !isPreview ? 'cursor-grab active:cursor-grabbing' : 'pointer-events-none'
       }`}
       style={{
-        background: 'rgba(255, 255, 255, 0.1)',
+        background: isPreview ? 'rgba(255, 255, 255, 0.05)' : 'rgba(255, 255, 255, 0.1)',
         backdropFilter: 'blur(20px)',
         border: '1px solid rgba(255, 255, 255, 0.2)',
-        boxShadow: isTop 
+        boxShadow: isTop && !isPreview
           ? '0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.1)' 
           : '0 10px 25px -5px rgba(0, 0, 0, 0.3)',
         zIndex: isTop ? 10 : 10 - stackIndex,
         scale,
         y: yOffset,
-        x,
-        rotate,
-        opacity
+        x: isPreview ? 0 : x,
+        rotate: isPreview ? 0 : rotate,
+        opacity: isPreview ? 1 : (isTop ? opacity : 1)
       }}
-      drag={isTop ? "x" : false}
+      drag={isTop && !isPreview ? "x" : false}
       dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
       dragElastic={0.2}
       onDrag={(_, info) => {

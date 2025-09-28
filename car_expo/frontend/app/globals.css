@@ -121,7 +121,115 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply text-foreground bg-black relative;
+  }
+}
+
+/* Night sky container */
+.night-sky {
+  @apply fixed inset-0 pointer-events-none;
+  z-index: 1;
+}
+
+/* Twinkling star animations with different speeds */
+@keyframes twinkle-slow {
+  0%, 100% { opacity: 0.2; }
+  50% { opacity: 1; }
+}
+
+@keyframes twinkle-medium {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.8; }
+}
+
+@keyframes twinkle-fast {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.9; }
+}
+
+/* Enhanced shooting star animations with longer trails and smoother fade */
+@keyframes shooting-star-1 {
+  0% {
+    transform: translateX(-400px) translateY(-400px);
+    opacity: 0;
+  }
+  2% {
+    opacity: 1;
+  }
+  98% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(calc(100vw + 400px)) translateY(calc(100vh + 400px));
+    opacity: 0;
+  }
+}
+
+@keyframes shooting-star-2 {
+  0% {
+    transform: translateX(-350px) translateY(-350px);
+    opacity: 0;
+  }
+  3% {
+    opacity: 1;
+  }
+  97% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(calc(100vw + 350px)) translateY(calc(100vh + 350px));
+    opacity: 0;
+  }
+}
+
+@keyframes shooting-star-3 {
+  0% {
+    transform: translateX(-380px) translateY(-380px);
+    opacity: 0;
+  }
+  2.5% {
+    opacity: 1;
+  }
+  97.5% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(calc(100vw + 380px)) translateY(calc(100vh + 380px));
+    opacity: 0;
+  }
+}
+
+@keyframes shooting-star-4 {
+  0% {
+    transform: translateX(-420px) translateY(-420px);
+    opacity: 0;
+  }
+  4% {
+    opacity: 1;
+  }
+  96% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(calc(100vw + 420px)) translateY(calc(100vh + 420px));
+    opacity: 0;
+  }
+}
+
+@keyframes shooting-star-5 {
+  0% {
+    transform: translateX(-360px) translateY(-360px);
+    opacity: 0;
+  }
+  3.5% {
+    opacity: 1;
+  }
+  96.5% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(calc(100vw + 360px)) translateY(calc(100vh + 360px));
+    opacity: 0;
   }
 }
 

@@ -4,18 +4,22 @@ import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import Hero3D from "@/components/Hero3D";
 import SwipeDeck from "@/components/SwipeDeck";
+import NightSky from "@/components/ShootingStars";
 
 export default function Home() {
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen relative z-10">
+      {/* Night Sky Background */}
+      <NightSky />
+      
       {/* 3D Hero Section */}
       <Hero3D />
 
       {/* Car Swipe Deck */}
-      <section id="swipe" className="container mx-auto px-6 py-12 md:py-16">
-        <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">Swipe Your Dream Car</h2>
-          <p className="text-gray-600 max-w-2xl mx-auto">
+      <section id="swipe" className="w-full py-12 md:py-16 relative z-10">
+        <div className="text-center mb-8 px-6">
+          <h2 className="text-3xl font-bold text-white mb-4">Swipe Your Dream Car</h2>
+          <p className="text-gray-300 max-w-2xl mx-auto">
             Swipe right to save your favorites, left to skip. Find the perfect car for you!
           </p>
         </div>
@@ -23,7 +27,7 @@ export default function Home() {
       </section>
 
       {/* Features */}
-      <section id="features" className="container mx-auto px-6 py-12 md:py-16">
+      <section id="features" className="container mx-auto px-6 py-12 md:py-16 relative z-10">
         <div className="grid gap-6 md:grid-cols-3">
           <FeatureCard title="Swipe to decide" desc="Intuitive left/right gestures with smooth animations and keyboard buttons." />
           <FeatureCard title="Favorites that stick" desc="Your saved cars persist locally so they're there when you come back." />
@@ -36,9 +40,9 @@ export default function Home() {
 
 function FeatureCard({ title, desc }: { title: string; desc: string }) {
   return (
-    <div className="rounded-xl border border-border bg-card p-5 shadow-sm">
-      <div className="text-lg font-medium">{title}</div>
-      <p className="mt-2 text-sm text-muted-foreground">{desc}</p>
+    <div className="rounded-xl border border-gray-700/50 bg-gray-900/30 backdrop-blur-sm p-5 shadow-lg">
+      <div className="text-lg font-medium text-white">{title}</div>
+      <p className="mt-2 text-sm text-gray-300">{desc}</p>
     </div>
   );
 }
