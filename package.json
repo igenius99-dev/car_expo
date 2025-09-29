@@ -1,0 +1,22 @@
+{
+  "name": "car-expo-v1",
+  "version": "1.0.0",
+  "description": "Car Expo V1 - Full Stack Car Discovery Platform",
+  "private": true,
+  "workspaces": [
+    "car_expo/frontend",
+    "car_expo/backend"
+  ],
+  "scripts": {
+    "dev": "concurrently \"yarn workspace frontend dev\" \"yarn workspace backend dev\"",
+    "build": "yarn workspace frontend build && yarn workspace backend build",
+    "start": "concurrently \"yarn workspace frontend start\" \"yarn workspace backend start\"",
+    "install:all": "yarn install && cd car_scraper && pip install -r requirements.txt"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

@@ -308,11 +308,17 @@ export default function Hero3D() {
           <button 
             className="bg-white hover:bg-[#f0f0f0] text-black font-semibold py-4 px-8 rounded-full text-lg md:text-xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-2xl"
             onClick={() => {
-              // Open search overlay (same as Cmd + \)
-              window.dispatchEvent(new Event("open-search"));
+              // Scroll to the swipe section
+              const swipeSection = document.getElementById('swipe')
+              if (swipeSection) {
+                swipeSection.scrollIntoView({ 
+                  behavior: 'smooth',
+                  block: 'start'
+                })
+              }
             }}
           >
-            Open Search
+            Start Your Engine
           </button>
         </div>
       </div>
