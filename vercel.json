@@ -4,31 +4,9 @@
     {
       "src": "car_expo/frontend/package.json",
       "use": "@vercel/next"
-    },
-    {
-      "src": "car_expo/backend/src/index.js",
-      "use": "@vercel/node",
-      "config": {
-        "maxDuration": 30
-      }
-    },
-    {
-      "src": "car_scraper/api.py",
-      "use": "@vercel/python",
-      "config": {
-        "maxDuration": 60
-      }
     }
   ],
   "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "/car_expo/backend/src/index.js"
-    },
-    {
-      "src": "/scraper/(.*)",
-      "dest": "/car_scraper/api.py"
-    },
     {
       "src": "/(.*)",
       "dest": "/car_expo/frontend/$1"
